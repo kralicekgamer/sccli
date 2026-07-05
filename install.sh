@@ -16,7 +16,8 @@ source .venv/bin/activate
 
 pip install -r requirements.txt
 
-echo "source $INSTALL_DIR/repo/.venv/bin/activate && python3 $INSTALL_DIR/repo/sccli.py \"\$@\"" > sccli
+echo "#!/bin/bash" > sccli
+echo "\"$INSTALL_DIR/repo/.venv/bin/python3\" \"$INSTALL_DIR/repo/main.py\" \"\$@\"" >> sccli
 chmod +x sccli
 
 mkdir -p "$HOME/.local/bin"
