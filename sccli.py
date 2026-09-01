@@ -17,15 +17,15 @@ def send_msg(data):
     data_last = data[-1]
 
     for line in data:
-        lines += f"{purple}║ {reset}" + line.ljust(70) + f"{purple}║{reset}"
+        lines += f"{purple}║ {reset}" + line.ljust(80) + f"{purple}║{reset}"
 
         if line != data_last:
             lines += "\n"
 
     msg = f"""
-{purple}╔═══════════════════════════════════════════════════════════════════════╗{reset}
+{purple}╔═════════════════════════════════════════════════════════════════════════════════╗{reset}
 {lines}
-{purple}╚════════════════════════════════{reset} {bold}SCCLI{reset} {purple}════════════════════════════════╝{reset}
+{purple}╚═════════════════════════════════════{reset} {bold}SCCLI{reset} {purple}═════════════════════════════════════╝{reset}
 """
     return msg
 
@@ -33,11 +33,15 @@ def send_msg(data):
 def get_prihlaseno(data):
     jidla_prihlaseno = []
     
-    for jidlo in data:
-        if jidlo["pocet"] == 1:
-            jidla_prihlaseno.append(jidlo)
+    try:
+        for jidlo in data:
+            if (jidlo["pocet"] == 1) or (jidlo["druh"] == "PO"):
+                jidla_prihlaseno.append(jidlo)
 
-    return jidla_prihlaseno
+        return jidla_prihlaseno
+
+    except StravaError:
+        login()
 
 
 def make_msg(data, args):
@@ -45,20 +49,22 @@ def make_msg(data, args):
 
     if args == "all":
         for jidlo in data:
-            lines.append(f"{jidlo["druh_chod"]}: {jidlo["nazev"]}")
+            lines.append(f"{jidlo["druh_popis"]}: {jidlo["nazev"]}")
 
     elif args == "obed":
         for jidlo in data:
             if jidlo["chod"] == "C":
-                lines.append(f"{jidlo["druh_chod"]}: {jidlo["nazev"]}")
+                lines.append(f"{jidlo["druh_popis"]}: {jidlo["nazev"]}")
+            if jidlo["druh"] == "PO":
+                lines.append(f"{jidlo["druh_popis"]}: {jidlo["nazev"]}")
 
     elif args == "vecere":
         for jidlo in data:
             if jidlo["chod"] == "E":
-                lines.append(f"{jidlo["druh_chod"]}: {jidlo["nazev"]}")
+                lines.append(f"{jidlo["druh_popis"]}: {jidlo["nazev"]}")
 
             if jidlo["chod"] == "F":
-                lines.append(f"{jidlo["druh_chod"]}: {jidlo["nazev"]}")
+                lines.append(f"{jidlo["druh_popis"]}: {jidlo["nazev"]}")
 
     if lines == []:
         lines = ["Dnes není nic k jídlu :("]
@@ -124,7 +130,7 @@ def main():
         delete()
 
     if args.today is not None:
-        print(send_msg(make_msg(get_prihlaseno(Filter.filter_json(["nazev", "druh_chod", "chod", "pocet"], api.getJidelnicekToday())), args.today)))
+        print(send_msg(make_msg(get_prihlaseno(Filter.filter_json(["nazev", "druh_popis", "chod", "pocet", "druh"], api.getJidelnicekToday())), args.today)))
 
 if __name__ == "__main__":
     main()
