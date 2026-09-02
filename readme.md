@@ -21,6 +21,9 @@ sccli --today obed
 # Zobrazit jen dnešní večeři
 sccli --today vecere
 
+# Zobrazí jídelníček na zítra
+sccli --next
+
 # Smazat uložené přihlašovací údaje (odhlášení)
 sccli --delete
 ```

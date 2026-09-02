@@ -30,9 +30,15 @@ def send_msg(data):
     return msg
 
 
-def get_prihlaseno(data):
+def get_prihlaseno(data, today=True):
     jidla_prihlaseno = []
-    
+
+    if today:
+        data = data.get("table0", [])
+
+    else:
+        data = data.get("table1", [])
+
     try:
         for jidlo in data:
             if (jidlo["pocet"] == 1) or (jidlo["druh"] == "PO"):
@@ -77,6 +83,7 @@ def parse_args():
 
     parser.add_argument("--delete", action="store_true", help="Smazat uživatele")
     parser.add_argument("--today", nargs="?", const="all", help="Zobrazit dnešní jídelníček")
+    parser.add_argument("--next", nargs="?", const="all", help="Zobrazit zítřejší jídelníček")
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -129,8 +136,14 @@ def main():
     if args.delete:
         delete()
 
+    # arg = args.today if args.today is not None else args.next (inline final boss)
+
     if args.today is not None:
-        print(send_msg(make_msg(get_prihlaseno(Filter.filter_json(["nazev", "druh_popis", "chod", "pocet", "druh"], api.getJidelnicekToday())), args.today)))
+        print(send_msg(make_msg(Filter.filter_json(["nazev", "druh_popis", "chod", "pocet", "druh"], get_prihlaseno(json.loads(api.getJidelnicekAll()), True)), args.today)))
+
+    if args.next is not None:
+        print(send_msg(make_msg(Filter.filter_json(["nazev", "druh_popis", "chod", "pocet", "druh"], get_prihlaseno(json.loads(api.getJidelnicekAll()), False)), args.next)))
+
 
 if __name__ == "__main__":
     main()
