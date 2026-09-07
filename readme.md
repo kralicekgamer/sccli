@@ -1,6 +1,8 @@
 # Strava.cz CLI (SCCLI)
 Jednoduchý program pro příkazovou řádku, který umožňuje zobrazení přihlášených jídel ze strava.cz přímo v terminálu.
 
+![Showcase](image.png)
+
 ## Instalace
 ```bash
 curl -s https://raw.githubusercontent.com/kralicekgamer/sccli/refs/heads/main/install.sh | bash
