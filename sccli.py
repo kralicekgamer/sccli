@@ -11,22 +11,21 @@ def send_msg(data):
     reset = "\033[0m"
     bold = "\033[01m"
     purple = "\033[35m"
-    
+
+    width = max(80, max(map(len, data), default=0))
     lines = ""
 
-    data_last = data[-1]
-
     for line in data:
-        lines += f"{purple}║ {reset}" + line.ljust(80) + f"{purple}║{reset}"
-
-        if line != data_last:
+        lines += f"{purple}║ {reset}" + line.ljust(width) + f"{purple}║{reset}"
+        if line != data[-1]:
             lines += "\n"
 
-    msg = f"""
-{purple}╔═════════════════════════════════════════════════════════════════════════════════╗{reset}
-{lines}
-{purple}╚═════════════════════════════════════{reset} {bold}SCCLI{reset} {purple}═════════════════════════════════════╝{reset}
-"""
+    top = f"{purple}╔{'═' * (width + 1)}╗{reset}"
+    footer_width = width - 6
+    footer = (f"{purple}╚{'═' * (footer_width // 2)}{reset} "
+              f"{bold}SCCLI{reset} {purple}"
+              f"{'═' * (footer_width - footer_width // 2)}╝{reset}")
+    msg = f"\n{top}\n{lines}\n{footer}\n"
     return msg
 
 
